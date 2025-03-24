@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,24 +12,23 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f4f4f4;
+            background-color: #3b82f6;
         }
         .container {
             display: flex;
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            width: 500px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
-        .auth-section {
-            flex: 1;
+        .form-container {
             padding: 20px;
+            width: 300px;
+            text-align: center;
         }
         .divider {
             width: 2px;
-            background: #007BFF;
+            background-color: #ccc;
             height: 100%;
         }
         input {
@@ -48,37 +48,40 @@
             font-size: 16px;
             cursor: pointer;
             border-radius: 5px;
-            transition: 0.3s;
         }
         button:hover {
             background-color: #0056b3;
         }
-        #message {
-            margin-top: 15px;
-            font-size: 14px;
+        .social-login {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .social-login button {
+            background: #ddd;
+            color: black;
+        }
+        .forgot-password {
+            font-size: 12px;
+            color: #007BFF;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="auth-section">
-            <h2>Register</h2>
-            <input type="email" id="regEmail" placeholder="Enter email">
-            <input type="password" id="regPassword" placeholder="Enter password">
-            <button id="registerBtn">Register</button>
-            <p id="registerMessage"></p>
-        </div>
-        <div class="divider"></div>
-        <div class="auth-section">
+        <div class="form-container">
             <h2>Login</h2>
-            <input type="email" id="loginEmail" placeholder="Enter email">
-            <input type="password" id="loginPassword" placeholder="Enter password">
+            <input type="email" id="login-email" placeholder="Email">
+            <input type="password" id="login-password" placeholder="Password">
+            <p class="forgot-password">Forgot password?</p>
             <button id="loginBtn">Login</button>
-            <p id="loginMessage"></p>
-        </div>
-    </div>
-
-    <script type="module">
+            <p>Don't have an account? <a href="#">Signup</a></p>
+            <div class="social-login">
+                <button>Login with Facebook</button>
+                <button>Login with Google</button>
+            </div>
+             <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
@@ -94,48 +97,20 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-
-        document.getElementById("registerBtn").addEventListener("click", async function () {
-            let email = document.getElementById("regEmail").value;
-            let password = document.getElementById("regPassword").value;
-            let messageElement = document.getElementById("registerMessage");
-
-            if (email === "" || password === "") {
-                messageElement.style.color = "red";
-                messageElement.innerText = "Please fill in all fields.";
-                return;
-            }
-
-            try {
-                await createUserWithEmailAndPassword(auth, email, password);
-                messageElement.style.color = "green";
-                messageElement.innerText = "User registered successfully!";
-            } catch (error) {
-                messageElement.style.color = "red";
-                messageElement.innerText = error.message;
-            }
-        });
-
-        document.getElementById("loginBtn").addEventListener("click", async function () {
-            let email = document.getElementById("loginEmail").value;
-            let password = document.getElementById("loginPassword").value;
-            let messageElement = document.getElementById("loginMessage");
-
-            if (email === "" || password === "") {
-                messageElement.style.color = "red";
-                messageElement.innerText = "Please fill in all fields.";
-                return;
-            }
-
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                messageElement.style.color = "green";
-                messageElement.innerText = "Login successful!";
-            } catch (error) {
-                messageElement.style.color = "red";
-                messageElement.innerText = error.message;
-            }
-        });
-    </script>
+        </div>
+        <div class="divider"></div>
+        <div class="form-container">
+            <h2>Signup</h2>
+            <input type="email" id="signup-email" placeholder="Email">
+            <input type="password" id="signup-password" placeholder="Create password">
+            <input type="password" id="signup-confirm-password" placeholder="Confirm password">
+            <button id="registerBtn">Signup</button>
+            <p>Already have an account? <a href="#">Login</a></p>
+            <div class="social-login">
+                <button>Signup with Facebook</button>
+                <button>Signup with Google</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
