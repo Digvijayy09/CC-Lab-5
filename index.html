@@ -3,130 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login & Signup</title>
+    <title>Firebase Authentication</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(to bottom, #1E5A80, #4F8B97, #9AD3C2, #FAF9DB);
-            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
         }
         .container {
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-        .tabs {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-        }
-        .tabs button {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            background: #4F8B97;
-            color: white;
-            border-radius: 5px;
-        }
-        .tabs button.active {
-            background: #1E5A80;
-        }
-        .input-field {
+        input {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
-        .btn {
+        button {
             width: 100%;
             padding: 10px;
-            background: #1E5A80;
-            color: white;
+            margin: 5px 0;
             border: none;
-            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            font-size: 16px;
             cursor: pointer;
+            border-radius: 5px;
         }
-        .hidden { display: none; }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #message {
+            margin-top: 15px;
+            font-size: 14px;
+            color: green;
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <div class="tabs">
-            <button id="loginTab" class="active" onclick="showForm('login')">Login</button>
-            <button id="signupTab" onclick="showForm('signup')">Signup</button>
-        </div>
-        
-        <form id="loginForm">
-            <input type="email" id="loginEmail" class="input-field" placeholder="Email Address" required>
-            <input type="password" id="loginPassword" class="input-field" placeholder="Password" required>
-            <button type="button" class="btn" onclick="loginUser()">Login</button>
-        </form>
-        
-        <form id="signupForm" class="hidden">
-            <input type="email" id="signupEmail" class="input-field" placeholder="Email Address" required>
-            <input type="password" id="signupPassword" class="input-field" placeholder="Password" required>
-            <input type="password" id="confirmPassword" class="input-field" placeholder="Confirm Password" required>
-            <button type="button" class="btn" onclick="signupUser()">Signup</button>
-        </form>
+        <h2>User Authentication</h2>
+        <input type="email" id="email" placeholder="Enter email">
+        <input type="password" id="password" placeholder="Enter password">
+        <button id="registerBtn">Register</button>
+        <button id="loginBtn">Login</button>
+        <p id="message"></p>
     </div>
 
     <script type="module">
+        // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
+        // Firebase configuration
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyBCNYpBEQ325bUrjGRs1VG0zz2hoqnGFHg",
+            authDomain: "cc-lab-5-ec1ab.firebaseapp.com",
+            projectId: "cc-lab-5-ec1ab",
+            storageBucket: "cc-lab-5-ec1ab.firebasestorage.app",
+            messagingSenderId: "89378681943",
+            appId: "1:89378681943:web:13949b74ead654e12e5f12",
+            measurementId: "G-475LGRDQWK"
         };
-        
+
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        
-        window.signupUser = function () {
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (password !== confirmPassword) {
-                alert("Passwords do not match");
+
+        document.getElementById("registerBtn").addEventListener("click", async function () {
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+            let messageElement = document.getElementById("message");
+
+            if (email === "" || password === "") {
+                messageElement.style.color = "red";
+                messageElement.innerText = "Please fill in all fields.";
                 return;
             }
-            
-            createUserWithEmailAndPassword(auth, email, password)
-                .then(() => alert("Signup successful!"))
-                .catch(error => alert(error.message));
-        }
-        
-        window.loginUser = function () {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            signInWithEmailAndPassword(auth, email, password)
-                .then(() => alert("Login successful!"))
-                .catch(error => alert(error.message));
-        }
-    </script>
 
-    <script>
-        function showForm(type) {
-            document.getElementById('loginForm').classList.toggle('hidden', type !== 'login');
-            document.getElementById('signupForm').classList.toggle('hidden', type !== 'signup');
-            document.getElementById('loginTab').classList.toggle('active', type === 'login');
-            document.getElementById('signupTab').classList.toggle('active', type === 'signup');
-        }
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                messageElement.style.color = "green";
+                messageElement.innerText = "User registered successfully!";
+            } catch (error) {
+                messageElement.style.color = "red";
+                messageElement.innerText = error.message;
+            }
+        });
+
+        document.getElementById("loginBtn").addEventListener("click", async function () {
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+            let messageElement = document.getElementById("message");
+
+            if (email === "" || password === "") {
+                messageElement.style.color = "red";
+                messageElement.innerText = "Please fill in all fields.";
+                return;
+            }
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                messageElement.style.color = "green";
+                messageElement.innerText = "Login successful!";
+            } catch (error) {
+                messageElement.style.color = "red";
+                messageElement.innerText = error.message;
+            }
+        });
     </script>
 </body>
 </html>
