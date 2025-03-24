@@ -3,123 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase Authentication</title>
+    <title>Login & Signup</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
-            align-items: center;
             height: 100vh;
-            background-color: #f4f4f4;
+            margin: 0;
+            font-family: Arial, sans-serif;
         }
         .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        input {
+            display: flex;
             width: 100%;
+        }
+        .section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: white;
+        }
+        .signup {
+            background-color: #1F5A80; /* Dark Blue */
+        }
+        .login {
+            background-color: #5B9EA6; /* Teal */
+        }
+        input, button {
+            width: 80%;
             padding: 10px;
             margin: 10px 0;
-            border: 1px solid #ccc;
+            border: none;
             border-radius: 5px;
+        }
+        input {
+            background: #ffffff;
+            color: #333;
         }
         button {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: none;
-            background-color: #007BFF;
-            color: white;
-            font-size: 16px;
+            background: #EAEFD3; /* Light Green */
+            color: black;
             cursor: pointer;
-            border-radius: 5px;
         }
         button:hover {
-            background-color: #0056b3;
-        }
-        #message {
-            margin-top: 15px;
-            font-size: 14px;
-            color: green;
+            background: #C8E1A2;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <h2>User Authentication</h2>
-        <input type="email" id="email" placeholder="Enter email">
-        <input type="password" id="password" placeholder="Enter password">
-        <button id="registerBtn">Register</button>
-        <button id="loginBtn">Login</button>
-        <p id="message"></p>
+        <div class="section signup">
+            <h2>Sign Up</h2>
+            <input type="email" id="signup-email" placeholder="Enter email">
+            <input type="password" id="signup-password" placeholder="Enter password">
+            <button onclick="register()">Register</button>
+        </div>
+        <div class="section login">
+            <h2>Login</h2>
+            <input type="email" id="login-email" placeholder="Enter email">
+            <input type="password" id="login-password" placeholder="Enter password">
+            <button onclick="login()">Login</button>
+        </div>
     </div>
 
     <script type="module">
-        // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBCNYpBEQ325bUrjGRs1VG0zz2hoqnGFHg",
             authDomain: "cc-lab-5-ec1ab.firebaseapp.com",
             projectId: "cc-lab-5-ec1ab",
-            storageBucket: "cc-lab-5-ec1ab.firebasestorage.app",
+            storageBucket: "cc-lab-5-ec1ab.appspot.com",
             messagingSenderId: "89378681943",
             appId: "1:89378681943:web:13949b74ead654e12e5f12",
             measurementId: "G-475LGRDQWK"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        document.getElementById("registerBtn").addEventListener("click", async function () {
-            let email = document.getElementById("email").value;
-            let password = document.getElementById("password").value;
-            let messageElement = document.getElementById("message");
-
-            if (email === "" || password === "") {
-                messageElement.style.color = "red";
-                messageElement.innerText = "Please fill in all fields.";
-                return;
-            }
-
+        window.register = async function () {
+            const email = document.getElementById("signup-email").value;
+            const password = document.getElementById("signup-password").value;
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
-                messageElement.style.color = "green";
-                messageElement.innerText = "User registered successfully!";
+                alert("User registered successfully!");
             } catch (error) {
-                messageElement.style.color = "red";
-                messageElement.innerText = error.message;
+                alert(error.message);
             }
-        });
+        };
 
-        document.getElementById("loginBtn").addEventListener("click", async function () {
-            let email = document.getElementById("email").value;
-            let password = document.getElementById("password").value;
-            let messageElement = document.getElementById("message");
-
-            if (email === "" || password === "") {
-                messageElement.style.color = "red";
-                messageElement.innerText = "Please fill in all fields.";
-                return;
-            }
-
+        window.login = async function () {
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                messageElement.style.color = "green";
-                messageElement.innerText = "Login successful!";
+                alert("Login successful!");
             } catch (error) {
-                messageElement.style.color = "red";
-                messageElement.innerText = error.message;
+                alert(error.message);
             }
-        });
+        };
     </script>
 </body>
 </html>
