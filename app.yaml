@@ -1,0 +1,6 @@
+runtime: nodejs18  # Use your Node.js version
+entrypoint: node server.js  # Replace 'server.js' with your main file
+
+handlers:
+- url: /.*
+  script: auto
