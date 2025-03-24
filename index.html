@@ -80,13 +80,11 @@
         .primary-btn:hover {
             background-color: #b77979;
         }
-        #message {
-            margin-top: 15px;
+        .message {
+            margin-top: 10px;
             font-size: 14px;
             text-align: center;
-        }
-        #confirmPassword {
-            display: block;
+            font-weight: bold;
         }
         .signup-btn {
             background-color: #c48b8b;
@@ -108,6 +106,7 @@
                 <input type="password" id="loginPassword" placeholder="Password" required>
             </div>
             <button class="primary-btn" id="loginBtn">Login</button>
+            <p class="message" id="loginMessage"></p>  <!-- Login Message -->
         </div>
         <div class="form-container">
             <h2>Sign Up</h2>
@@ -117,16 +116,15 @@
             <div class="form-group">
                 <input type="password" id="signupPassword" placeholder="Create password" required>
             </div>
-            <div class="form-group" id="confirmPassword">
+            <div class="form-group">
                 <input type="password" id="confirmPasswordInput" placeholder="Confirm password" required>
             </div>
             <button class="primary-btn signup-btn" id="signupBtn">Sign Up</button>
+            <p class="message" id="signupMessage"></p>  <!-- Sign-Up Message -->
         </div>
     </div>
-    <p id="message"></p>
 
     <script type="module">
-        // Firebase authentication script remains the same as in previous version
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
@@ -146,7 +144,7 @@
         document.getElementById("loginBtn").addEventListener("click", async function () {
             let email = document.getElementById("loginEmail").value;
             let password = document.getElementById("loginPassword").value;
-            let messageElement = document.getElementById("message");
+            let messageElement = document.getElementById("loginMessage");
 
             if (email === "" || password === "") {
                 messageElement.style.color = "red";
@@ -168,7 +166,7 @@
             let email = document.getElementById("signupEmail").value;
             let password = document.getElementById("signupPassword").value;
             let confirmPassword = document.getElementById("confirmPasswordInput").value;
-            let messageElement = document.getElementById("message");
+            let messageElement = document.getElementById("signupMessage");
 
             if (email === "" || password === "" || confirmPassword === "") {
                 messageElement.style.color = "red";
