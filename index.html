@@ -4,67 +4,131 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Firebase Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
         body {
-            font-family: Arial, sans-serif;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f4f4f4;
+            background-color: #70b3a1;
         }
         .container {
+            display: flex;
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 800px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .form-container {
+            width: 50%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-color: #e5f3eb;
+        }
+        .login-container {
+            background-color: #1f4e79;
+            color: white;
+        }
+        .login-container input {
+            background-color: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+            color: white;
+        }
+        .login-container input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 24px;
             text-align: center;
+        }
+        .login-container h2 {
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 15px;
         }
         input {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
         }
-        button {
+        .primary-btn {
             width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: none;
-            background-color: #007BFF;
+            padding: 12px;
+            background-color: #1f4e79;
             color: white;
+            border: none;
+            border-radius: 6px;
             font-size: 16px;
             cursor: pointer;
-            border-radius: 5px;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
         }
-        button:hover {
-            background-color: #0056b3;
+        .primary-btn:hover {
+            background-color: #3a6d9c;
         }
         #message {
             margin-top: 15px;
             font-size: 14px;
-            color: green;
+            text-align: center;
+        }
+        #confirmPassword {
+            display: block;
+        }
+        .signup-btn {
+            background-color: #70b3a1;
+        }
+        .signup-btn:hover {
+            background-color: #5a9787;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <h2>User Authentication</h2>
-        <input type="email" id="email" placeholder="Enter email">
-        <input type="password" id="password" placeholder="Enter password">
-        <button id="registerBtn">Register</button>
-        <button id="loginBtn">Login</button>
-        <p id="message"></p>
+        <div class="form-container login-container">
+            <h2>Login</h2>
+            <div class="form-group">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="loginPassword" placeholder="Password" required>
+            </div>
+            <button class="primary-btn" id="loginBtn">Login</button>
+        </div>
+        <div class="form-container">
+            <h2>Sign Up</h2>
+            <div class="form-group">
+                <input type="email" id="signupEmail" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="signupPassword" placeholder="Create password" required>
+            </div>
+            <div class="form-group" id="confirmPassword">
+                <input type="password" id="confirmPasswordInput" placeholder="Confirm password" required>
+            </div>
+            <button class="primary-btn signup-btn" id="signupBtn">Sign Up</button>
+        </div>
     </div>
+    <p id="message"></p>
 
     <script type="module">
-        // Import Firebase modules
+        // Firebase authentication script remains the same as in previous version
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBCNYpBEQ325bUrjGRs1VG0zz2hoqnGFHg",
             authDomain: "cc-lab-5-ec1ab.firebaseapp.com",
@@ -75,34 +139,12 @@
             measurementId: "G-475LGRDQWK"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        document.getElementById("registerBtn").addEventListener("click", async function () {
-            let email = document.getElementById("email").value;
-            let password = document.getElementById("password").value;
-            let messageElement = document.getElementById("message");
-
-            if (email === "" || password === "") {
-                messageElement.style.color = "red";
-                messageElement.innerText = "Please fill in all fields.";
-                return;
-            }
-
-            try {
-                await createUserWithEmailAndPassword(auth, email, password);
-                messageElement.style.color = "green";
-                messageElement.innerText = "User registered successfully!";
-            } catch (error) {
-                messageElement.style.color = "red";
-                messageElement.innerText = error.message;
-            }
-        });
-
         document.getElementById("loginBtn").addEventListener("click", async function () {
-            let email = document.getElementById("email").value;
-            let password = document.getElementById("password").value;
+            let email = document.getElementById("loginEmail").value;
+            let password = document.getElementById("loginPassword").value;
             let messageElement = document.getElementById("message");
 
             if (email === "" || password === "") {
@@ -120,6 +162,34 @@
                 messageElement.innerText = error.message;
             }
         });
+
+        document.getElementById("signupBtn").addEventListener("click", async function () {
+            let email = document.getElementById("signupEmail").value;
+            let password = document.getElementById("signupPassword").value;
+            let confirmPassword = document.getElementById("confirmPasswordInput").value;
+            let messageElement = document.getElementById("message");
+
+            if (email === "" || password === "" || confirmPassword === "") {
+                messageElement.style.color = "red";
+                messageElement.innerText = "Please fill in all fields.";
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                messageElement.style.color = "red";
+                messageElement.innerText = "Passwords do not match.";
+                return;
+            }
+
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                messageElement.style.color = "green";
+                messageElement.innerText = "User registered successfully!";
+            } catch (error) {
+                messageElement.style.color = "red";
+                messageElement.innerText = error.message;
+            }
+        });
     </script>
 </body>
-</html> 
+</html>
