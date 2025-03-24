@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,24 +11,14 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #3b82f6;
+            background-color: #f4f4f4;
         }
         .container {
-            display: flex;
             background: white;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        .form-container {
-            padding: 20px;
-            width: 300px;
             text-align: center;
-        }
-        .divider {
-            width: 2px;
-            background-color: #ccc;
-            height: 100%;
         }
         input {
             width: 100%;
@@ -52,39 +41,30 @@
         button:hover {
             background-color: #0056b3;
         }
-        .social-login {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .social-login button {
-            background: #ddd;
-            color: black;
-        }
-        .forgot-password {
-            font-size: 12px;
-            color: #007BFF;
-            cursor: pointer;
+        #message {
+            margin-top: 15px;
+            font-size: 14px;
+            color: green;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <div class="form-container">
-            <h2>Login</h2>
-            <input type="email" id="login-email" placeholder="Email">
-            <input type="password" id="login-password" placeholder="Password">
-            <p class="forgot-password">Forgot password?</p>
-            <button id="loginBtn">Login</button>
-            <p>Don't have an account? <a href="#">Signup</a></p>
-            <div class="social-login">
-                <button>Login with Facebook</button>
-                <button>Login with Google</button>
-            </div>
-             <script type="module">
+        <h2>User Authentication</h2>
+        <input type="email" id="email" placeholder="Enter email">
+        <input type="password" id="password" placeholder="Enter password">
+        <button id="registerBtn">Register</button>
+        <button id="loginBtn">Login</button>
+        <p id="message"></p>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBCNYpBEQ325bUrjGRs1VG0zz2hoqnGFHg",
             authDomain: "cc-lab-5-ec1ab.firebaseapp.com",
@@ -95,22 +75,51 @@
             measurementId: "G-475LGRDQWK"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        </div>
-        <div class="divider"></div>
-        <div class="form-container">
-            <h2>Signup</h2>
-            <input type="email" id="signup-email" placeholder="Email">
-            <input type="password" id="signup-password" placeholder="Create password">
-            <input type="password" id="signup-confirm-password" placeholder="Confirm password">
-            <button id="registerBtn">Signup</button>
-            <p>Already have an account? <a href="#">Login</a></p>
-            <div class="social-login">
-                <button>Signup with Facebook</button>
-                <button>Signup with Google</button>
-            </div>
-        </div>
-    </div>
+
+        document.getElementById("registerBtn").addEventListener("click", async function () {
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+            let messageElement = document.getElementById("message");
+
+            if (email === "" || password === "") {
+                messageElement.style.color = "red";
+                messageElement.innerText = "Please fill in all fields.";
+                return;
+            }
+
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                messageElement.style.color = "green";
+                messageElement.innerText = "User registered successfully!";
+            } catch (error) {
+                messageElement.style.color = "red";
+                messageElement.innerText = error.message;
+            }
+        });
+
+        document.getElementById("loginBtn").addEventListener("click", async function () {
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+            let messageElement = document.getElementById("message");
+
+            if (email === "" || password === "") {
+                messageElement.style.color = "red";
+                messageElement.innerText = "Please fill in all fields.";
+                return;
+            }
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                messageElement.style.color = "green";
+                messageElement.innerText = "Login successful!";
+            } catch (error) {
+                messageElement.style.color = "red";
+                messageElement.innerText = error.message;
+            }
+        });
+    </script>
 </body>
-</html>
+</html> 
