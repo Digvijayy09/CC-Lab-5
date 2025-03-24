@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Authentication</title>
+</head>
+<body>
+    <h2>User Authentication</h2>
+    <input type="email" id="email" placeholder="Enter email"><br>
+    <input type="password" id="password" placeholder="Enter password"><br>
+    <button id="registerBtn">Register</button>
+    <button id="loginBtn">Login</button>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+        // Firebase configuration
+      const firebaseConfig = {
+  apiKey: "AIzaSyBCNYpBEQ325bUrjGRs1VG0zz2hoqnGFHg",
+  authDomain: "cc-lab-5-ec1ab.firebaseapp.com",
+  projectId: "cc-lab-5-ec1ab",
+  storageBucket: "cc-lab-5-ec1ab.firebasestorage.app",
+  messagingSenderId: "89378681943",
+  appId: "1:89378681943:web:13949b74ead654e12e5f12",
+  measurementId: "G-475LGRDQWK"
+};
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app); // ✅ FIXED: auth is properly initialized here
+
+        // Wait for the DOM to load before attaching event listeners
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("registerBtn").addEventListener("click", async function () {
+                let email = document.getElementById("email").value;
+                let password = document.getElementById("password").value;
+                try {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    alert("User registered successfully!");
+                } catch (error) {
+                    alert(error.message);
+                }
+            });
+
+            document.getElementById("loginBtn").addEventListener("click", async function () {
+                let email = document.getElementById("email").value;
+                let password = document.getElementById("password").value;
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    alert("Login successful!");
+                } catch (error) {
+                    alert(error.message);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
