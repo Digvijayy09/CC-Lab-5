@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase Authentication with Google</title>
+    <title>Firebase Authentication</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -80,20 +80,6 @@
         .primary-btn:hover {
             background-color: #b77979;
         }
-        .google-btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #db4437;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-        .google-btn:hover {
-            background-color: #c1351d;
-        }
         .message {
             margin-top: 10px;
             font-size: 14px;
@@ -120,7 +106,6 @@
                 <input type="password" id="loginPassword" placeholder="Password" required>
             </div>
             <button class="primary-btn" id="loginBtn">Login</button>
-            <button class="google-btn" id="googleLoginBtn">Login with Google</button>
             <p class="message" id="loginMessage"></p>  <!-- Login Message -->
         </div>
         <div class="form-container">
@@ -135,14 +120,13 @@
                 <input type="password" id="confirmPasswordInput" placeholder="Confirm password" required>
             </div>
             <button class="primary-btn signup-btn" id="signupBtn">Sign Up</button>
-            <button class="google-btn" id="googleSignupBtn">Sign Up with Google</button>
             <p class="message" id="signupMessage"></p>  <!-- Sign-Up Message -->
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -158,39 +142,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
-        const googleProvider = new GoogleAuthProvider();
-
-        // Google Sign Up
-        document.getElementById("googleSignupBtn").addEventListener("click", async function () {
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-                const user = result.user;
-                await setDoc(doc(collection(db, "users"), user.uid), {
-                    email: user.email,
-                    createdAt: serverTimestamp(),
-                    provider: 'google'
-                });
-                document.getElementById("signupMessage").style.color = "green";
-                document.getElementById("signupMessage").innerText = "Sign-Up successful!";
-            } catch (error) {
-                document.getElementById("signupMessage").style.color = "red";
-                document.getElementById("signupMessage").innerText = error.message;
-            }
-        });
-
-        // Google Sign In
-        document.getElementById("googleLoginBtn").addEventListener("click", async function () {
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-                const user = result.user;
-                document.getElementById("loginMessage").style.color = "green";
-                document.getElementById("loginMessage").innerText = "Login successful!";
-            } catch (error) {
-                document.getElementById("loginMessage").style.color = "red";
-                document.getElementById("loginMessage").innerText = error.message;
-            }
-        });
 
         document.getElementById("signupBtn").addEventListener("click", async function () {
             let email = document.getElementById("signupEmail").value;
