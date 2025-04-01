@@ -10,8 +10,8 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
-
 const app = express();
+
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -40,9 +40,13 @@ app.post("/login", async (req, res) => {
         const { email } = req.body;
         const user = await admin.auth().getUserByEmail(email);
 
+        if (!user) {
+            return res.status(400).json({ error: "User not found" });
+        }
+
         // Generate a custom authentication token (optional)
         const token = await admin.auth().createCustomToken(user.uid);
-        res.json({ message: "User found!", uid: user.uid, token });
+        res.json({ message: "Login successful", uid: user.uid, token });
     } catch (error) {
         res.status(400).json({ error: "Invalid login credentials" });
     }
