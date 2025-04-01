@@ -2,7 +2,6 @@ const express = require("express");
 const admin = require("firebase-admin");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const { Datastore } = require("@google-cloud/datastore");
 require("dotenv").config();
 
 const app = express();
@@ -14,21 +13,21 @@ admin.initializeApp({
     credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
 });
 
-// Initialize Google Cloud Datastore
-const datastore = new Datastore();
+// Initialize Firestore
+const db = admin.firestore();
 
-// Register a user (Firebase Authentication)
+// Register a user (Firebase Authentication & Firestore)
 app.post("/register", async (req, res) => {
     try {
         const { email, password, name } = req.body;
         const user = await admin.auth().createUser({ email, password });
 
-        const userKey = datastore.key(["User", user.uid]);
-        const userData = {
-            key: userKey,
-            data: { email, name, createdAt: new Date() },
-        };
-        await datastore.save(userData);
+        // Store user details in Firestore
+        await db.collection("users").doc(user.uid).set({
+            email,
+            name,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
 
         res.status(201).json({ message: "User registered successfully", uid: user.uid });
     } catch (error) {
@@ -49,15 +48,14 @@ app.post("/login", async (req, res) => {
     }
 });
 
-// Retrieve User Data from Datastore
+// Retrieve User Data from Firestore
 app.get("/user/:uid", async (req, res) => {
     try {
-        const userKey = datastore.key(["User", req.params.uid]);
-        const [user] = await datastore.get(userKey);
+        const userDoc = await db.collection("users").doc(req.params.uid).get();
 
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!userDoc.exists) return res.status(404).json({ message: "User not found" });
 
-        res.json(user);
+        res.json(userDoc.data());
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
