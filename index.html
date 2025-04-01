@@ -175,6 +175,27 @@
                 messageElement.innerText = error.message;
             }
         });
+
+        document.getElementById("loginBtn").addEventListener("click", async function () {
+            let email = document.getElementById("loginEmail").value;
+            let password = document.getElementById("loginPassword").value;
+            let messageElement = document.getElementById("loginMessage");
+
+            if (email === "" || password === "") {
+                messageElement.style.color = "red";
+                messageElement.innerText = "Please fill in both fields.";
+                return;
+            }
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                messageElement.style.color = "green";
+                messageElement.innerText = "Login successful!";
+            } catch (error) {
+                messageElement.style.color = "red";
+                messageElement.innerText = "Invalid credentials. Please try again.";
+            }
+        });
     </script>
 </body>
 </html>
