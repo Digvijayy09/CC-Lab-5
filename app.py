@@ -1,16 +1,15 @@
 from flask import Flask, request, jsonify
 import firebase_admin
-from firebase_admin import credentials, auth
-from google.cloud import datastore
+from firebase_admin import credentials, auth, firestore
 
 app = Flask(__name__)
 
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate("firebase-admin-sdk.json")  # Download from Firebase Console
+cred = credentials.Certificate("firebase-admin-sdk.json")  # Ensure this file exists
 firebase_admin.initialize_app(cred)
 
-# Initialize Google Cloud Datastore
-datastore_client = datastore.Client()
+# Initialize Firestore
+db = firestore.client()
 
 # Register Route
 @app.route('/register', methods=['POST'])
@@ -22,6 +21,14 @@ def register():
 
     try:
         user = auth.create_user(email=email, password=password)
+
+        # Store user in Firestore (without password)
+        db.collection("users").document(user.uid).set({
+            "email": email,
+            "name": name,
+            "created_at": firestore.SERVER_TIMESTAMP
+        })
+
         return jsonify({"message": "User registered successfully", "uid": user.uid}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -38,7 +45,7 @@ def login():
     except Exception as e:
         return jsonify({"error": "Invalid Token"}), 401
 
-# Store User Data in Cloud Datastore
+# Store User Data in Firestore
 @app.route('/store_user_data', methods=['POST'])
 def store_user_data():
     data = request.json
@@ -49,13 +56,11 @@ def store_user_data():
         user_id = decoded_token["uid"]
 
         # Store user details (excluding password)
-        entity = datastore.Entity(datastore_client.key("User", user_id))
-        entity.update({
+        db.collection("users").document(user_id).update({
             "email": data.get("email"),
             "name": data.get("name"),
-            "created_at": datastore.datetime.datetime.utcnow()
+            "updated_at": firestore.SERVER_TIMESTAMP
         })
-        datastore_client.put(entity)
 
         return jsonify({"message": "User data stored successfully"}), 200
     except Exception as e:
