@@ -127,6 +127,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBCNYpBEQ325bUrjGRs1VG0zz2hoqnGFHg",
@@ -140,27 +141,7 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-
-        document.getElementById("loginBtn").addEventListener("click", async function () {
-            let email = document.getElementById("loginEmail").value;
-            let password = document.getElementById("loginPassword").value;
-            let messageElement = document.getElementById("loginMessage");
-
-            if (email === "" || password === "") {
-                messageElement.style.color = "red";
-                messageElement.innerText = "Please fill in all fields.";
-                return;
-            }
-
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                messageElement.style.color = "green";
-                messageElement.innerText = "Login successful!";
-            } catch (error) {
-                messageElement.style.color = "red";
-                messageElement.innerText = error.message;
-            }
-        });
+        const db = getFirestore(app);
 
         document.getElementById("signupBtn").addEventListener("click", async function () {
             let email = document.getElementById("signupEmail").value;
@@ -181,7 +162,12 @@
             }
 
             try {
-                await createUserWithEmailAndPassword(auth, email, password);
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                await setDoc(doc(collection(db, "users"), user.uid), {
+                    email: user.email,
+                    createdAt: serverTimestamp()
+                });
                 messageElement.style.color = "green";
                 messageElement.innerText = "User registered successfully!";
             } catch (error) {
